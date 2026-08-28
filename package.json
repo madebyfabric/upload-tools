@@ -1,0 +1,35 @@
+{
+  "name": "@madebyfabric/livewire-file-upload-tools",
+  "version": "0.1.0",
+  "description": "Composable file transformation hooks for Livewire and Flux uploads",
+  "type": "module",
+  "main": "./src/index.js",
+  "module": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./pipeline": "./src/file-upload-pipeline.js",
+    "./context": "./src/file-upload-adapter-context.js",
+    "./flux": "./src/flux-file-upload-adapter.js",
+    "./crop": "./src/image-crop.js",
+    "./compression": "./src/image-upload-compression.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [
+    "laravel",
+    "livewire",
+    "flux",
+    "file-upload",
+    "image-processing"
+  ],
+  "author": "MadeByFabric",
+  "license": "MIT",
+  "dependencies": {
+    "compressorjs": "^1.2.1",
+    "cropperjs": "^2.1.0"
+  }
+}
