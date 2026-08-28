@@ -11,7 +11,7 @@ let adapterCleanup = null;
 
 /**
  * Register the temporary Flux adapter until Flux or Livewire exposes a
- * documented pre-upload transformation hook.
+ * documented pre-upload transformation API.
  *
  * @returns {() => boolean}
  */

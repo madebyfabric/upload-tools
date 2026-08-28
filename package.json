@@ -1,7 +1,7 @@
 {
   "name": "@madebyfabric/livewire-file-upload-tools",
   "version": "0.1.0",
-  "description": "Composable file transformation hooks for Livewire and Flux uploads",
+  "description": "Composable file transformation tools for Livewire and Flux uploads",
   "type": "module",
   "main": "./src/index.js",
   "module": "./src/index.js",

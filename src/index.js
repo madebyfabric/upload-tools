@@ -18,6 +18,6 @@ export {
 export {
     imageCompressionPlugin,
     imageCropPlugin,
-    registerFileUploadHooks,
-} from "./file-upload-hooks.js";
+    registerFileUploadTools,
+} from "./file-upload-tools.js";
 export { registerFileUploadPlugin } from "./file-upload-plugin.js";

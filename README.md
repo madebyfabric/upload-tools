@@ -1,11 +1,11 @@
-# Livewire file upload hooks
+# Livewire file upload tools
 
-Reusable browser-side file transformation hooks for Flux file uploads in Laravel Livewire applications.
+Reusable browser-side file transformation tools for Flux file uploads in Laravel Livewire applications.
 
 ## Install
 
 ```sh
-npm install @madebyfabric/livewire-file-upload-hooks
+npm install @madebyfabric/livewire-file-upload-tools
 ```
 
 The built-in image processors use `cropperjs` and `compressorjs`; they are installed as package dependencies. Import Cropper's stylesheet in the app when using the crop processor:
@@ -19,21 +19,21 @@ import "cropperjs/dist/cropper.css";
 Call the setup function once from the app's browser entry point. It installs the built-in plugins and the Flux adapter without changing the DOM during module import.
 
 ```js
-import { registerFileUploadHooks } from "@madebyfabric/livewire-file-upload-hooks";
+import { registerFileUploadTools } from "@madebyfabric/livewire-file-upload-tools";
 
-registerFileUploadHooks();
+registerFileUploadTools();
 ```
 
 Opt out of a built-in plugin when a project does not need it:
 
 ```js
-registerFileUploadHooks({ processors: ["compression"] });
+registerFileUploadTools({ processors: ["compression"] });
 ```
 
 The cleanup function is useful with Vite hot module replacement or when mounting and unmounting an app:
 
 ```js
-const cleanup = registerFileUploadHooks();
+const cleanup = registerFileUploadTools();
 
 import.meta.hot?.dispose(cleanup);
 ```
@@ -60,9 +60,9 @@ A plugin is the extension seam for adding future functionality. It has a name an
 
 ```js
 import {
-    registerFileUploadHooks,
+    registerFileUploadTools,
     registerFileUploadPlugin,
-} from "@madebyfabric/livewire-file-upload-hooks";
+} from "@madebyfabric/livewire-file-upload-tools";
 
 const pdfPlugin = {
     name: "pdf-preview",
@@ -74,7 +74,7 @@ const pdfPlugin = {
     },
 };
 
-registerFileUploadHooks({ plugins: ["compression", "crop", pdfPlugin] });
+registerFileUploadTools({ plugins: ["compression", "crop", pdfPlugin] });
 ```
 
 For a plugin that is installed independently, the lower-level installer is also available:
@@ -88,7 +88,7 @@ const cleanup = registerFileUploadPlugin(pdfPlugin);
 Processors receive the current files and a context object. They may return a new array synchronously or asynchronously.
 
 ```js
-import { registerFileUploadProcessor } from "@madebyfabric/livewire-file-upload-hooks";
+import { registerFileUploadProcessor } from "@madebyfabric/livewire-file-upload-tools";
 
 registerFileUploadProcessor("add-prefix", (files, context) => {
     return files.map(

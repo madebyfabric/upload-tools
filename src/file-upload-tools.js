@@ -28,7 +28,7 @@ const builtInPlugins = new Map([
 ]);
 
 /**
- * Start the built-in upload hooks.
+ * Start the built-in upload tools.
  *
  * This function is deliberately opt-in: importing the package does not add
  * listeners to the document or register global processors.
@@ -36,7 +36,7 @@ const builtInPlugins = new Map([
  * @param {{ plugins?: Array<string|Object>, processors?: Array<"compression"|"crop">, adapters?: Array<"flux"> }} [options]
  * @returns {() => boolean} A cleanup function for hot reloads and teardown.
  */
-export function registerFileUploadHooks(options = {}) {
+export function registerFileUploadTools(options = {}) {
     const plugins = options.plugins ?? options.processors ?? defaultPlugins;
     const adapterNames = options.adapters ?? defaultAdapters;
     const cleanups = [];
