@@ -1,5 +1,5 @@
 import Cropper from "cropperjs";
-import { registerFileUploadProcessor } from "./file-upload-pipeline";
+import { registerFileUploadProcessor } from "./file-upload-pipeline.js";
 
 const imageTransformName = "image-crop";
 const defaultOutputSize = 512;
@@ -152,9 +152,16 @@ function cropImage(file, context) {
                 const selection = cropper.getCropperSelection();
 
                 if (image) {
-                    image.initialCenterSize = "cover";
-                    image.scalable = false;
-                    image.$center("cover");
+                    configureCropperImage(image).catch((error) => {
+                        if (settled) {
+                            return;
+                        }
+
+                        settled = true;
+                        cleanup();
+                        window.Flux.modal(modalName).close();
+                        reject(error);
+                    });
                 }
 
                 if (selection) {
@@ -172,6 +179,21 @@ function cropImage(file, context) {
             }
         });
     });
+}
+
+/**
+ * Configure the image after Cropper has inserted it into the stage.
+ *
+ * @param {{ initialFit: string, scalable: boolean, $ready: () => Promise<unknown>, $resetTransform: () => unknown, $center: (fit: string) => unknown }} image
+ * @returns {Promise<void>}
+ */
+export async function configureCropperImage(image) {
+    image.scalable = true;
+    image.initialFit = "cover";
+    await image.$ready();
+    image.$resetTransform();
+    image.$center("cover");
+    image.scalable = false;
 }
 
 /**
