@@ -3,7 +3,9 @@ import { test } from "node:test";
 
 globalThis.HTMLElement ??= class HTMLElement {};
 
-const { configureCropperImage } = await import("../src/image-crop.js");
+const { configureCropperImage, waitForStableLayout } = await import(
+    "../src/image-crop.js",
+);
 
 test("fits the cropper image using the current initial-fit API", async () => {
     const calls = [];
@@ -34,4 +36,40 @@ test("fits the cropper image using the current initial-fit API", async () => {
         { type: "center", fit: "cover", scalable: true },
     ]);
     assert.equal(image.scalable, false);
+});
+
+test("waits for the modal stage to settle before initializing", async () => {
+    const originalRequestAnimationFrame = globalThis.requestAnimationFrame;
+    const callbacks = [];
+    const rects = [
+        { left: 10, top: 10, width: 441, height: 441 },
+        { left: 20, top: 20, width: 480, height: 480 },
+        { left: 30, top: 30, width: 509, height: 509 },
+        { left: 30, top: 30, width: 509, height: 509 },
+        { left: 30, top: 30, width: 509, height: 509 },
+    ];
+    let rectIndex = 0;
+
+    globalThis.requestAnimationFrame = (callback) => {
+        callbacks.push(callback);
+    };
+
+    try {
+        const settled = waitForStableLayout(
+            {
+                getBoundingClientRect: () =>
+                    rects[Math.min(rectIndex++, rects.length - 1)],
+            },
+            () => false,
+        );
+
+        while (callbacks.length > 0) {
+            callbacks.shift()();
+        }
+
+        assert.equal(await settled, true);
+        assert.equal(rectIndex, 5);
+    } finally {
+        globalThis.requestAnimationFrame = originalRequestAnimationFrame;
+    }
 });

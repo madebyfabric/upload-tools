@@ -144,8 +144,12 @@ function cropImage(file, context) {
 
         window.Flux.modal(modalName).show();
 
-        requestAnimationFrame(() => {
+        const initializeCropper = async () => {
             try {
+                if (!(await waitForStableLayout(stage, () => settled))) {
+                    return;
+                }
+
                 cropper = new Cropper(preview, { container: stage });
 
                 const image = cropper.getCropperImage();
@@ -177,7 +181,62 @@ function cropImage(file, context) {
                 window.Flux.modal(modalName).close();
                 reject(error);
             }
-        });
+        };
+
+        void initializeCropper();
+    });
+}
+
+/**
+ * Wait until the stage has a non-zero, stable rendered box.
+ *
+ * Modal transitions can change the stage's bounding box after it is shown.
+ * Cropper must be created after that transition or it will fit to the
+ * intermediate dimensions and leave a gap when the modal settles.
+ *
+ * @param {HTMLElement} element
+ * @param {() => boolean} shouldCancel
+ * @returns {Promise<boolean>}
+ */
+export function waitForStableLayout(element, shouldCancel) {
+    return new Promise((resolve) => {
+        let previousRect = null;
+        let stableFrames = 0;
+
+        const check = () => {
+            if (shouldCancel()) {
+                resolve(false);
+
+                return;
+            }
+
+            const rect = element.getBoundingClientRect();
+            const currentRect = [
+                rect.left,
+                rect.top,
+                rect.width,
+                rect.height,
+            ];
+            const hasStableRect =
+                previousRect &&
+                currentRect.every(
+                    (value, index) =>
+                        Math.abs(value - previousRect[index]) < 0.01,
+                );
+
+            stableFrames = hasStableRect ? stableFrames + 1 : 0;
+            previousRect = currentRect;
+
+            if (rect.width > 0 && rect.height > 0 && stableFrames >= 2) {
+                resolve(true);
+
+                return;
+            }
+
+            requestAnimationFrame(check);
+        };
+
+        requestAnimationFrame(check);
     });
 }
 
